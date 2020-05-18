@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Absolut inte fakedata</title>
+    <script src="https:/>/ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="table-responsive">
+        <H1>Absolut äkta data direkt ifrån vår Arduino</H1>
+        <br />
+
+        <table class="table table-bordered table-striped" id="measurment_table">
+            <tr>
+                <th>Mätnings Id</th>
+                <th>Temperatur</th>
+                <th>Tid vid avläsning</th>
+            </tr>
+        </table>
+    </div>
+</div>
+</body>
+<script>
+
+        function data() {
+            return {
+                messages : [],
+            }
+        };
+
+        function fetchData() {
+            fetch('http://localhost:8080/getMeasurementReport')
+                .then(res => res.json())
+                .then(t => {
+                    data.messages = t
+                })
+        };
+
+        fetchData();
+
+        $(document).ready(function (){
+            $.getJSON("measurment.json", function (data) {
+                var measurment_data = '';
+                $.each(data, function (key, value) {
+                    measurment_data += '<tr>';
+                    measurment_data += '<td>'+value.id+'</td>';
+                    measurment_data += '<td>'+value.temp+'</td>';
+                    measurment_data += '<td>'+value.timestamp+'</td>';
+                    measurment_data += '</tr>';
+                });
+                $('#measurment_table').append(measurment_data)
+            });
+        });
+
+
+
+</script>
+</html>
