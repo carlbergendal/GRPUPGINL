@@ -37,18 +37,18 @@
                 .then(t => {
                     data.messages = t
                 })
-        };
+        }
 
         fetchData();
 
         $(document).ready(function (){
-            $.getJSON("measurment.json", function (data) {
+            $.getJSON(data.messages, function (data) {
                 var measurment_data = '';
                 $.each(data, function (key, value) {
                     measurment_data += '<tr>';
                     measurment_data += '<td>'+value.id+'</td>';
-                    measurment_data += '<td>'+value.temp+'</td>';
-                    measurment_data += '<td>'+value.timestamp+'</td>';
+                    measurment_data += '<td>'+value.temperature+'</td>';
+                    measurment_data += '<td>'+value.timeStamp+'</td>';
                     measurment_data += '</tr>';
                 });
                 $('#measurment_table').append(measurment_data)
