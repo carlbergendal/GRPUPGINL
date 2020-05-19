@@ -2,22 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Absolut inte fakedata</title>
-    <script src="https:/>/ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <title>Measurements</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" /-->
+    <!--script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script-->
 </head>
 <body>
+<H1>Livedata:</H1>
+<div id="measurement"></div>
+<H1>Report:</H1>
 <div class="container">
     <div class="table-responsive">
-        <H1>Absolut äkta data direkt ifrån vår Arduino</H1>
         <br />
-
-        <table class="table table-bordered table-striped" id="measurment_table">
+        <table class="table table-bordered table-striped" id="measurement_table">
             <tr>
-                <th>Mätnings Id</th>
-                <th>Temperatur</th>
-                <th>Tid vid avläsning</th>
+                <th>Id</th>
+                <th>Temperature</th>
+                <th>Timestamp</th>
             </tr>
         </table>
     </div>
@@ -25,37 +26,36 @@
 </body>
 <script>
 
-        function data() {
-            return {
-                messages : [],
-            }
-        };
+    setInterval(
+    function() {
+        fetch('http://localhost:8080/getLastMeasurement')
+            .then(function(response){
+                return response.json();
+            })
+            .then(function(data) {
+                console.log(data);
+                let html = '';
+                html += '<b>Id: ' + data.id + ', Temperature: ' + data.temperature + ', Timestamp: ' + data.timeStamp + '</b>';
+                document.getElementById('measurement').innerHTML = html;
+            })
+    }, 3000);
 
-        function fetchData() {
-            fetch('http://localhost:8080/getMeasurementReport')
-                .then(res => res.json())
-                .then(t => {
-                    data.messages = t
+    function getReport() {
+        fetch('http://localhost:8080/getMeasurementReport')
+            .then(function(response){
+                return response.json();
+            })
+            .then(function(data){
+                console.log(data);
+                let html ='';
+                data.forEach(function(item){
+                    html +='<b>Id: '+item.id+', Temperature: '+item.temperature+', Timestamp: '+item.timeStamp+'</b></br>';
                 })
-        }
+                document.getElementById('measurement_table').innerHTML = html;
+            })
+    }
 
-        fetchData();
-
-        $(document).ready(function (){
-            $.getJSON(data.messages, function (data) {
-                var measurment_data = '';
-                $.each(data, function (key, value) {
-                    measurment_data += '<tr>';
-                    measurment_data += '<td>'+value.id+'</td>';
-                    measurment_data += '<td>'+value.temperature+'</td>';
-                    measurment_data += '<td>'+value.timeStamp+'</td>';
-                    measurment_data += '</tr>';
-                });
-                $('#measurment_table').append(measurment_data)
-            });
-        });
-
-
+    getReport();
 
 </script>
 </html>
