@@ -40,7 +40,8 @@
             })
     }, 3000);
 
-    function getReport() {
+    setInterval(
+    function () {
         fetch('http://localhost:8080/getMeasurementReport')
             .then(function(response){
                 return response.json();
@@ -53,7 +54,7 @@
                 })
                 document.getElementById('measurement_table').innerHTML = html;
             })
-    }
+    }, 3000);
 
     getReport();
 
